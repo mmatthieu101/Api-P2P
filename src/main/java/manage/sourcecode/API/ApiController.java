@@ -3,20 +3,10 @@ package manage.sourcecode.API;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -30,9 +20,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/*")
 public class ApiController {
 
-	// private static final Logger logger =
-	// LoggerFactory.getLogger(HomeController.class);
-
+	public static final String PATH_ROOT_FOLDER = "/opt/gitrepo/";
+	public static final String PATH_SHELL_FILES  = "/root/workspaceJavaEEEclipse/spring_mygithub/shell/";
+	
 	/**
 	 * Exec commit command
 	 * 
@@ -41,7 +31,7 @@ public class ApiController {
 	 */
 	@RequestMapping(value = "commit", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody String command_commit() throws IOException {
-		String nameScriptFolder = "/home/device/p2p";
+		String nameScriptFolder = PATH_SHELL_FILES;
 		String nameScriptFile = "gitadd.sh";
 		String commentaire = "commentaire";
 		
@@ -72,107 +62,15 @@ public class ApiController {
 		return result;
 	}
 	
-	// Create new repository
-	@RequestMapping(value = "createrepository/{nameRepository}", method = RequestMethod.GET, produces = "application/json")
-	public @ResponseBody String command_createrepository(@PathVariable String nameRepository) {
-		System.out.println("ENTRE");
-		String value = "";
-		String s = "";
-		Process p;
-
-		//create root directory 
-		this._createRootDirectory();
-		
-		// check if folder repository exist
-		String result = "";
-		if(!_isFolderExist("/home/device/P2P_PROJECT/", nameRepository)) {
-			System.out.println("CREATE"+nameRepository);
-
-			try {
-				p = Runtime.getRuntime().exec("mkdir -m 777 /home/device/P2P-PROJECT/"+nameRepository);
-				BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-				while ((s = br.readLine()) != null) {
-					System.out.println(s);
-					value += s + "\n";
-				}
-
-				p.waitFor();
-				System.out.println("exit: " + p.exitValue());
-				p.destroy();
-			} catch (Exception e) {
-				System.out.println("ERROR!");
-			}
-
-			return value;
-		}
-		return value;
-	}
-	
-	// Create new repository
-		@RequestMapping(value = "/createrepository2", method = RequestMethod.POST, produces = "application/json")
-		public @ResponseBody String command_createrepository2(@PathVariable String name) {
-			System.out.println("ENTRE:"+name);
-			String value = "";
-			String s = "";
-			Process p;
-
-			//create root directory 
-			this._createRootDirectory();
-			
-			// check if folder repository exist
-			String result = "";
-			if(!_isFolderExist("/home/device/P2P_PROJECT/", name)) {
-				System.out.println("CREATE"+name);
-
-				try {
-					p = Runtime.getRuntime().exec("mkdir -m 777 /home/device/P2P-PROJECT/"+name);
-					BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-					while ((s = br.readLine()) != null) {
-						System.out.println(s);
-						value += s + "\n";
-					}
-
-					p.waitFor();
-					System.out.println("exit: " + p.exitValue());
-					p.destroy();
-				} catch (Exception e) {
-					System.out.println("ERROR!");
-				}
-
-				return value;
-			}
-			return value;
-		}
-	
-	
-	
-	// Display repositories
-	@RequestMapping(value = "displayrepositories", method = RequestMethod.GET, produces = "application/json")
-	public @ResponseBody String command_displayrepositories() {
-		return "fileContent";
-	}
-		
-	// Display files list
-	@RequestMapping(value = "fileslist/{nameRepository}", method = RequestMethod.GET, produces = "application/json")
-	public @ResponseBody String command_filesList(@PathVariable String nameRepository) {
-		return "fileslist by nameRepository";
-	}
-	
-	// Display file content
-	@RequestMapping(value = "displayfile/{nameFile}", method = RequestMethod.GET, produces = "application/json")
-	public @ResponseBody String command_displayfile(@PathVariable String nameFile) {
-		return "fileContent";
-	}
-	
-	
-	// Edit a file
-	
-	
 	
 	//HELPERS
-	//Create root directory
+	
+	/**
+	 * Create root directory
+	 * @return
+	 */
 	public String _createRootDirectory() {
-		//String value = this._shellCommand("mkdir -m 777 /home/device/P2P-PROJECT/"+ nameDirectory);
+		//String value = this._shellCommand("mkdir -m 777 "+PATH_ROOT_FOLDER+ nameDirectory);
 		String nameRootFolder = "P2P-PROJECT";
 		
 		String result = "";
@@ -190,7 +88,7 @@ public class ApiController {
 		
 		System.out.println("ENTRE FILEISEXIST");
 		
-		String nameScriptFolder = "/home/device/p2p";
+		String nameScriptFolder = PATH_SHELL_FILES;
 		String nameScriptFile = "fileexist.sh";
 		String param = "/home/device/"+nameFile; // name of the folder
 		
@@ -218,7 +116,7 @@ public class ApiController {
 	
 	public boolean _isFolderExist(String pathFolder, String nameFile) {
 		
-		String nameScriptFolder = "/home/device/p2p";
+		String nameScriptFolder = PATH_SHELL_FILES;
 		String nameScriptFile = "fileexist.sh";
 		String param = pathFolder + nameFile; // name of the folder
 		
@@ -267,7 +165,7 @@ public class ApiController {
 	@RequestMapping(value = "test", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody String command_test() throws IOException, InterruptedException {
 		String s = "";
-		String[] cmd = { "/bin/sh", "-c", "cd /home/device/p2p && /bin/bash gitadd.sh" };
+		String[] cmd = { "/bin/sh", "-c", "cd "+PATH_SHELL_FILES+" && /bin/bash gitadd.sh" };
 
 		Process p = Runtime.getRuntime().exec(cmd);
 		System.out.println("FIN");

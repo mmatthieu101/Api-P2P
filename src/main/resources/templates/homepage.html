@@ -1,16 +1,16 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head> 
-    <title>Getting Started: Handling Form Submission</title>
+    <title>Homepage</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
 	<h1>Form</h1>
-    <form  action="/createrepository3" method="post">
-    	<p>Name: <input type="text" name="name" /></p>
-        <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
+    <form  action="/create/repository" method="post">
+    	<p>Name: <input type="text" name="repositoryName" /></p>
+        <p><input type="submit" value="Créer repository" /></p>
     </form>
     
-    <a href="/repositories">Show repositories</a>
+    <a href="show/repositories">Show repositories</a>
 </body>
 </html>

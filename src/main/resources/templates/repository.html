@@ -2,20 +2,32 @@
 
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<title>Getting Started: Handling Form Submission</title>
+<title>Repository</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
-<h1>Repository</h1>
-
-
+	<h1>Repository</h1>
 
 	<ul th:each="repo : ${repository}">
-	<th: test="${repo.name equal cc}">
-            <div class="error">OK</div>
-    </th:>
-		<li><a th:href="@{'/showfile/' + ${repo.name}}" th:text="${repo.name}"></a></li>
-	</ul>
+		<li>
+			<p th:text="${repo.name}"></p>
+			
+			<div th:if="${repo.type eq 'folder'}">
+				<form action="/show/repository" method="post">
+					<input name="path" type="hidden" th:value="${repo.path}" />
+					<input name="name" type="hidden" th:value="${repo.name}" />
+					<input type="submit" value="Afficher folder" />
+				</form>
+			</div>
 
+			<div th:if="${repo.type eq 'file'}">
+				<form action="/show/file" method="post">
+					<input name="path" type="hidden" th:value="${repo.path}" />
+					<input name="name" type="hidden" th:value="${repo.name}" />
+					<input type="submit" value="Afficher file" />
+				</form>
+			</div>
+		</li>
+	</ul>
 </body>
 </html>

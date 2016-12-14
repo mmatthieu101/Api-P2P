@@ -2,15 +2,21 @@
 
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<title>Getting Started: Handling Form Submission</title>
+<title>Liste des repositories</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
-	<h1>List repositories</h1>
+	<h1>Liste des repositories</h1>
 
 	<ul th:each="repository : ${repositories}">
-		<li><a th:href="@{'/show/' + ${repository.name}}" th:text="${repository.name}"></a></li>
-	</ul>
+		<li><p th:text="${repository.name}" />
 
+			<form action="/show/repository" method="post">
+				<input name="path" type="hidden" th:value="${repository.path}" />
+				<input name="name" type="hidden" th:value="${repository.name}" />
+				<input type="submit" value="Afficher le repository" />
+			</form>
+		</li>
+	</ul>
 </body>
 </html>
