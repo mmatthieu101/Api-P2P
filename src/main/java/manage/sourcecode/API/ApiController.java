@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.json.simple.JSONArray;
@@ -45,6 +46,8 @@ public class ApiController {
 		String commentaire = "commentaire";
 		
 		String[] cmd = { "/bin/bash", "-c", "cd " + nameScriptFolder + " && /bin/bash " + nameScriptFile + " " + commentaire };
+		
+		System.out.println("-->"+Arrays.toString(cmd));
 		
 		String result = this._displayOutput(cmd);
 		
