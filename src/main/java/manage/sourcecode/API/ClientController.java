@@ -173,6 +173,11 @@ public class ClientController {
 	}
 	
 
+	@RequestMapping(value = "/upload", method = RequestMethod.GET)
+	public String upload(Model model) {
+		return "upload";
+	}
+	
 	@RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
 	public String uploadFile(@RequestParam("file") MultipartFile file,
 			Model model) {
@@ -187,12 +192,15 @@ public class ClientController {
 			//on met le fichier uploader dans le dossier temp
 			file.transferTo(fichierLocal);
 			
-			//TODO: git add + git push
+			System.out.println(fichierLocal.getAbsolutePath() +" ? "+ fichierLocal.exists());
+			
+			model.addAttribute("pathLocal", fichierLocal.getAbsolutePath());
+			//TODO: git add + git commit + git push
 			
 		} catch (Exception e) {
 			System.err.println("Impossible de sauvegarder le fichier. "+ e.getMessage());
 		}
 		
-		return "uploadFile";
+		return "upload";
 	}
 }
