@@ -2,6 +2,7 @@ package manage.sourcecode.API;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 
 import javax.servlet.http.HttpServletRequest;
@@ -95,11 +96,80 @@ public class ClientController {
 		return "repositories";
 	}
 
-	@RequestMapping(value = "repository/{name}", method = RequestMethod.GET)
-	public @ResponseBody String repository(HttpServletRequest request, Model model, @PathVariable String name) {
+	@RequestMapping(value = "show/{name}", method = RequestMethod.GET)
+	public String repository(HttpServletRequest request, Model model, @PathVariable String name) {
 		System.out.println("-->" + name);
 		
-		return name;
+		String value = "";
+		String s = "";
+		Process p;
+
+		JSONArray files;
+		JSONObject json = new JSONObject();
+
+		JSONArray filesArray = new JSONArray();
+		JSONObject file1 = new JSONObject();
+
+		try {
+			p = Runtime.getRuntime().exec("ls /home/device/P2P-PROJECT/"+name);
+			BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			while ((s = br.readLine()) != null) {
+				file1 = new JSONObject();
+				file1.put("name", s);
+				filesArray.add(file1);
+				System.out.println(s);
+				value += s + "\n";
+			}
+
+			p.waitFor();
+			System.out.println("exit: " + p.exitValue());
+			p.destroy();
+		} catch (Exception e) {
+			System.out.println("ERROR!");
+		}
+		System.out.println("-1->"+value);
+		
+		files = filesArray;
+
+		System.out.println("--->" + files.toString());
+
+		model.addAttribute("repository", files);
+		return "repository";
+	}
+	
+	public @ResponseBody String isFolder() {
+		
+		String nameScriptFolder = "/home/device/p2p";
+		String nameScriptFile = "isFileOrFolder.sh";
+		String path = "commentaire";
+		
+		String[] cmd = { "/bin/bash", "-c", "cd " + nameScriptFolder + " && /bin/bash " + nameScriptFile + " " + path };
+		
+		String result = this._displayOutput(cmd);
+		
+		return result;
+	}
+	
+	public String _displayOutput(String[] cmd) {
+		String result = "";
+		Runtime runtime = Runtime.getRuntime();
+		try {
+			Process process = runtime.exec(cmd);
+
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			String line;
+			while ((line = bufferedReader.readLine()) != null) {
+				System.out.println(line);
+				result += line;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	public boolean isFile() {
+		return false;
 	}
 	
 
@@ -125,5 +195,4 @@ public class ClientController {
 		
 		return "uploadFile";
 	}
-
 }
