@@ -1,6 +1,7 @@
 package manage.sourcecode.API;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStreamReader;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,7 +13,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 
 /**
@@ -97,6 +100,30 @@ public class ClientController {
 		System.out.println("-->" + name);
 		
 		return name;
+	}
+	
+
+	@RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
+	public String uploadFile(@RequestParam("file") MultipartFile file,
+			Model model) {
+		System.out.println("OriginalFilename : "+ file.getOriginalFilename());
+
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("filename", file.getOriginalFilename());
+		
+		String tmpDir = System.getProperty("java.io.tmpdir");
+		File fichierLocal = new File(tmpDir + file.getOriginalFilename());
+		try {
+			//on met le fichier uploader dans le dossier temp
+			file.transferTo(fichierLocal);
+			
+			//TODO: git add + git push
+			
+		} catch (Exception e) {
+			System.err.println("Impossible de sauvegarder le fichier. "+ e.getMessage());
+		}
+		
+		return "uploadFile";
 	}
 
 }
