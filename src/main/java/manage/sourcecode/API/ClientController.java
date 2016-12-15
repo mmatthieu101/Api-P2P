@@ -1,8 +1,11 @@
 package manage.sourcecode.API;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -16,8 +19,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -275,5 +280,111 @@ public class ClientController {
 		}
 		return result;
 	}
+	
+	//PART2
+	
+
+
+	@RequestMapping(value = "/upload", method = RequestMethod.GET)
+	public String upload(Model model) {
+		return "upload";
+	}
+	
+	@RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
+	public String uploadFile(@RequestParam("file") MultipartFile file,
+			Model model) {
+		System.out.println("OriginalFilename : "+ file.getOriginalFilename());
+
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("filename", file.getOriginalFilename());
+		
+		String tmpDir = System.getProperty("java.io.tmpdir");
+		File fichierLocal = new File(tmpDir + file.getOriginalFilename());
+		try {
+			//on met le fichier uploader dans le dossier temp
+			file.transferTo(fichierLocal);
+			
+			System.out.println(fichierLocal.getAbsolutePath() +" ? "+ fichierLocal.exists());
+			
+			model.addAttribute("pathLocal", fichierLocal.getAbsolutePath());
+			//TODO: git add + git commit + git push
+			
+		} catch (Exception e) {
+			System.err.println("Impossible de sauvegarder le fichier. "+ e.getMessage());
+		}
+		
+		return "upload";
+	}
+	
+	@RequestMapping(value = "/editFile")
+	public String editFile(@RequestParam(value="fileSelected", required = false) String fileSelected,
+			HttpServletRequest request,
+			Model model) {
+		if(fileSelected == null || fileSelected.isEmpty()){
+			//il faut selectionner un fichier
+			
+			List<File> files = new ArrayList<File>();
+			files.add(new File("C:\\Users\\Jordane\\AppData\\Local\\Temp\\DebianInstallation.txt"));
+			
+			model.addAttribute("allFiles", files);
+			
+			return "editFile";
+		}else{
+			//fichier selectionner, on peut editer le contenu
+			
+			request.setAttribute("fileSelected", fileSelected);
+			return "forward:/editContent";
+		}
+	}
+
+	@RequestMapping(value = "/editContent")
+	public String editContent(@RequestParam(value="content", required = false) String content,
+			@RequestParam(value="fileSelected", required = false) String fileSelected,
+			HttpServletRequest request,
+			Model model) {
+		
+		if(fileSelected == null || fileSelected.isEmpty()){
+			//pas de fichier selectionné
+			return "redirect:/editFile";
+		}
+		
+		//TODO: lire le contenu reel du fichier (syntaxe : cat fichier.txt)
+		String contenu = "azertyuiop";
+		model.addAttribute("content", contenu);
+		//request.setAttribute("content", contenu);
+		
+		//fichier selectionne mais pas de contenu maj pour le moment
+		request.setAttribute("fileSelected", fileSelected); //on garde le fichier precedemment choisi			
+		
+		
+		return "editContent";
+	}
+	
+
+
+	@RequestMapping(value = "/edit")
+	public String edit(@RequestParam(value="content", required = false) String content,
+			@RequestParam(value="fileSelected", required = false) String fileSelected,
+			HttpServletRequest request,
+			Model model) {
+		
+		if(fileSelected == null || fileSelected.isEmpty()){
+			//pas de fichier selectionné
+			return "redirect:/editFile";
+		}
+		
+		if(content == null || content.isEmpty()){
+			//pas de contenu
+			return "redirect:/editContent";
+		}
+		
+		// TODO : mettre le contenu dans le fichier + git add + git commit + git push
+			
+		
+		
+		return "editContent";
+}
+	
+	
 }
 	
