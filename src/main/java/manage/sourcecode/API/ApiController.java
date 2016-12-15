@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class ApiController {
 
 	public static final String PATH_ROOT_FOLDER = "/opt/gitrepo/";
-	public static final String PATH_SHELL_FILES  = "/root/workspaceJavaEEEclipse/spring_mygithub/shell/";
+	public static final String PATH_SHELL_FILES  = "/root/workspaceJavaEEEclipse/Api-P2P-matth/shell/";
 	
 	/**
 	 * Exec commit command
@@ -35,7 +35,7 @@ public class ApiController {
 		String nameScriptFile = "gitadd.sh";
 		String commentaire = "commentaire";
 		
-		String[] cmd = { "/bin/bash", "-c", "cd " + nameScriptFolder + " && /bin/bash " + nameScriptFile + " " + commentaire };
+		String[] cmd = { "/bin/bash", "-c", "cd " + nameScriptFolder + " && /bin/bash " + nameScriptFile + " " + commentaire +" 2> /opt/gitrepo/error.txt" };
 		
 		System.out.println("-->"+Arrays.toString(cmd));
 		
@@ -66,23 +66,10 @@ public class ApiController {
 	//HELPERS
 	
 	/**
-	 * Create root directory
+	 * Check if directory exist
+	 * @param nameFile
 	 * @return
 	 */
-	public String _createRootDirectory() {
-		//String value = this._shellCommand("mkdir -m 777 "+PATH_ROOT_FOLDER+ nameDirectory);
-		String nameRootFolder = "P2P-PROJECT";
-		
-		String result = "";
-		if(!_isFolderExist("/home/device/", "P2P-PROJECT")) {
-			result = this._shellCommand("mkdir -m 777 /home/device/" + nameRootFolder);
-		}
-		
-		return result;
-	}
-	
-	// Check if directory exist
-	// Display file content
 	@RequestMapping(value = "fileexist/{nameFile}", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody String command_fileIsExist(@PathVariable String nameFile) {
 		
@@ -147,48 +134,6 @@ public class ApiController {
 
 	}
 
-	
-	
-	/**
-	 * Get output of mkdir command
-	 * 
-	 * @return
-	 * @throws IOException
-	 */
-	@RequestMapping(value = "mkdir", method = RequestMethod.GET, produces = "application/json")
-	public @ResponseBody String command_mkdir() throws IOException {
-		String value = this._shellCommand("mkdir -m 777 /home/device/123456");
-
-		return value;
-	}
-
-	@RequestMapping(value = "test", method = RequestMethod.GET, produces = "application/json")
-	public @ResponseBody String command_test() throws IOException, InterruptedException {
-		String s = "";
-		String[] cmd = { "/bin/sh", "-c", "cd "+PATH_SHELL_FILES+" && /bin/bash gitadd.sh" };
-
-		Process p = Runtime.getRuntime().exec(cmd);
-		System.out.println("FIN");
-
-		String value = "";
-
-		try {
-			p = Runtime.getRuntime().exec(cmd);
-			BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			while ((s = br.readLine()) != null) {
-				value += s + "\n";
-				System.out.println("-->" + s);
-			}
-
-			p.waitFor();
-			System.out.println("exit: " + p.exitValue());
-			p.destroy();
-		} catch (Exception e) {
-		}
-
-		return value;
-	}
-
 	/**
 	 * exec shell command line
 	 * 
@@ -217,19 +162,4 @@ public class ApiController {
 
 		return value;
 	}
-
-	/*
-	 * String files; JSONObject json = new JSONObject();
-	 * 
-	 * JSONArray filesArray = new JSONArray(); JSONObject file1 = new
-	 * JSONObject(); file1.put("name", 1); filesArray.add(file1);
-	 * 
-	 * //JSONObject file2 = new JSONObject(); //file2.put("name", 2);
-	 * //array.add(file2);
-	 * 
-	 * json.put("folders", filesArray);
-	 * 
-	 * files = json.toString();
-	 */
-
 }

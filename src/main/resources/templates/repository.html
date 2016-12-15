@@ -20,7 +20,7 @@
 				</form>
 			</div>
 
-			<div th:if="${repo.type eq 'file'}">
+			<div th:unless="${ repo.type eq 'folder'}">
 				<form action="/show/file" method="post">
 					<input name="path" type="hidden" th:value="${repo.path}" />
 					<input name="name" type="hidden" th:value="${repo.name}" />

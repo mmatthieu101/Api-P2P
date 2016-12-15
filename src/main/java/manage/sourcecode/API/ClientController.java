@@ -8,11 +8,20 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.RestTemplate;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 /**
  * Handles jsp pages
@@ -44,6 +53,9 @@ public class ClientController {
 		String value = "";
 		String s = "";
 		Process p;
+		
+		JSONObject jsonObject = new JSONObject();
+		JSONArray jsonArray = new JSONArray();
 
 		try {
 			p = Runtime.getRuntime().exec("mkdir -m 777 "+ PATH_ROOT_FOLDER + repositoryName);
@@ -61,8 +73,12 @@ public class ClientController {
 		}
 
 		// return JSON
-
-		return "redirect:/homepage";
+		jsonObject.put("message", "Repository créé");
+		
+		jsonArray.add(jsonObject);
+		
+		return jsonArray.toJSONString();
+		//return "redirect:/homepage";
 	}
 
 	/**
@@ -141,7 +157,9 @@ public class ClientController {
 					jsonObject.put("type", "folder");
 
 				} else if (type.equals("file")) {
-					jsonObject.put("type", "file");
+					String extension = this._getExtension(nameFileOrFolder);
+					System.out.println("EXT:"+extension);
+					jsonObject.put("type", extension);
 				}
 
 				jsonArray.add(jsonObject);
@@ -154,6 +172,8 @@ public class ClientController {
 			System.out.println("Erreur dans repository function");
 		}
 
+		//return jsonArray.toJSONString();
+		
 		model.addAttribute("repository", jsonArray);
 
 		return "repository";
@@ -171,12 +191,32 @@ public class ClientController {
 		String path = request.getParameter("path");
 		String name = request.getParameter("name");
 		String content = "";
+		
+		JSONObject jsonObject = new JSONObject();
+		JSONArray jsonArray = new JSONArray();
 
 		content = this._catFile(path);
 
+		//jsonObject.put("content", content);
+
+		//jsonArray.add(jsonObject);
+		
+		//return jsonArray.toJSONString(
+		
 		model.addAttribute("contentFile", content);
 
 		return "contentfile";
+	}
+	
+	public String _getExtension(String fileName) {
+		String extension = "";
+
+		int i = fileName.lastIndexOf('.');
+		if (i >= 0) {
+		    extension = fileName.substring(i+1);
+		}
+		
+		return extension;
 	}
 
 	/**
@@ -236,3 +276,4 @@ public class ClientController {
 		return result;
 	}
 }
+	
