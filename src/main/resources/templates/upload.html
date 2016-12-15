@@ -1,0 +1,17 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>File upload page</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+	<form th:action="@{/uploadFile}" method="post" enctype="multipart/form-data">
+		<h1>File upload</h1>
+		<label for="file">Fichier</label><input name="file" type="file" />
+		<input type="submit" value="Valider"/>
+	</form>
+	<div th:if="${pathLocal != null}">
+		<p th:text="${pathLocal}"></p>
+	</div>
+</body>
+</html>

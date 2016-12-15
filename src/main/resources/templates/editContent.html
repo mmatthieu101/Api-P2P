@@ -1,0 +1,16 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>File edition page</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+	<div th:if="${content != null}">
+		<form th:action="@{/edit}" method="post">
+			<h1>File edit</h1>
+			<textarea rows="20" cols="80" th:text="${content}"></textarea>
+			<input type="submit" value="Valider"/>
+		</form>
+	</div>
+</body>
+</html>

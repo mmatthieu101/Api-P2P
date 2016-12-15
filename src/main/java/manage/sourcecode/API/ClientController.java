@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -202,5 +204,74 @@ public class ClientController {
 		}
 		
 		return "upload";
+	}
+	
+	@RequestMapping(value = "/editFile")
+	public String editFile(@RequestParam(value="fileSelected", required = false) String fileSelected,
+			HttpServletRequest request,
+			Model model) {
+		if(fileSelected == null || fileSelected.isEmpty()){
+			//il faut selectionner un fichier
+			
+			List<File> files = new ArrayList<File>();
+			files.add(new File("C:\\Users\\Jordane\\AppData\\Local\\Temp\\DebianInstallation.txt"));
+			
+			model.addAttribute("allFiles", files);
+			
+			return "editFile";
+		}else{
+			//fichier selectionner, on peut editer le contenu
+			
+			request.setAttribute("fileSelected", fileSelected);
+			return "forward:/editContent";
+		}
+	}
+
+	@RequestMapping(value = "/editContent")
+	public String editContent(@RequestParam(value="content", required = false) String content,
+			@RequestParam(value="fileSelected", required = false) String fileSelected,
+			HttpServletRequest request,
+			Model model) {
+		
+		if(fileSelected == null || fileSelected.isEmpty()){
+			//pas de fichier selectionné
+			return "redirect:/editFile";
+		}
+		
+		//TODO: lire le contenu reel du fichier (syntaxe : cat fichier.txt)
+		String contenu = "azertyuiop";
+		model.addAttribute("content", contenu);
+		//request.setAttribute("content", contenu);
+		
+		//fichier selectionne mais pas de contenu maj pour le moment
+		request.setAttribute("fileSelected", fileSelected); //on garde le fichier precedemment choisi			
+		
+		
+		return "editContent";
+	}
+	
+
+
+	@RequestMapping(value = "/edit")
+	public String edit(@RequestParam(value="content", required = false) String content,
+			@RequestParam(value="fileSelected", required = false) String fileSelected,
+			HttpServletRequest request,
+			Model model) {
+		
+		if(fileSelected == null || fileSelected.isEmpty()){
+			//pas de fichier selectionné
+			return "redirect:/editFile";
+		}
+		
+		if(content == null || content.isEmpty()){
+			//pas de contenu
+			return "redirect:/editContent";
+		}
+		
+		// TODO : mettre le contenu dans le fichier + git add + git commit + git push
+			
+		
+		
+		return "editContent";
 	}
 }
